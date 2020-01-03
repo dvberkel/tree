@@ -1,8 +1,9 @@
 var tree_system = {
     configuration: {
-        angle: Math.PI/6,
+        angle: Math.PI / 6,
         step: 10,
-        iterations: 3,
+        iterations: 5,
+        duration: 1000
     },
     start: 'T',
     rules: {
@@ -19,29 +20,36 @@ var tree_system = {
     }
 }
 
-system = document.getElementById('system');
+var system = document.getElementById('system');
 system.value = JSON.stringify(tree_system, null, 2);
 
-var width = 640;
-var height = 480;
+var command, last_time;
 
 function setup() {
-    createCanvas(640, 480);
+    var canvast = createCanvas(640, 640);
+    canvast.parent('sketch-container');
     strokeWeight(4);
     stroke(125);
+    last_time = millis();
+    command = expand(tree_system);
 }
 
 function draw() {
     translate(width / 2, height);
     scale(1, -1);
-    rotate(Math.PI/2);
+    rotate(Math.PI / 2);
     try {
         tree_system = JSON.parse(system.value);
         system.classList.remove('error');
     } catch (e) {
         system.classList.add('error');
     }
-    var command = expand(tree_system);
+    var time = millis()
+    if ((time - last_time) > tree_system.configuration.duration) {
+        command = expand(tree_system);
+        last_time = time;
+    }
+    background(255);
     interpret(tree_system.configuration, command);
 }
 
@@ -96,7 +104,7 @@ function substitute(rules, word) {
 
 function select_one(options) {
     var total_weight = options.map(function (option) { return option[0]; }).reduce(function (sum, v) { return sum + v; });
-    var target = total_weight * Math.random();
+    var target = total_weight * random();
     var accumulated_weight = 0;
     for (var index = 0; index < options.length; index++) {
         accumulated_weight += options[index][0];
