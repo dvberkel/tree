@@ -1,20 +1,3 @@
-var width = 640;
-var height = 480;
-
-function setup() {
-    createCanvas(640, 480);
-    strokeWeight(4);
-    stroke(125);
-}
-
-function draw() {
-    translate(width / 2, height);
-    scale(1, -1);
-    rotate(Math.PI/2);
-    var command = expand(tree_system);
-    interpret(tree_system.configuration, command);
-}
-
 var tree_system = {
     configuration: {
         angle: Math.PI/6,
@@ -34,6 +17,32 @@ var tree_system = {
             [1, 'FF'],
         ],
     }
+}
+
+system = document.getElementById('system');
+system.value = JSON.stringify(tree_system, null, 2);
+
+var width = 640;
+var height = 480;
+
+function setup() {
+    createCanvas(640, 480);
+    strokeWeight(4);
+    stroke(125);
+}
+
+function draw() {
+    translate(width / 2, height);
+    scale(1, -1);
+    rotate(Math.PI/2);
+    try {
+        tree_system = JSON.parse(system.value);
+        system.classList.remove('error');
+    } catch (e) {
+        system.classList.add('error');
+    }
+    var command = expand(tree_system);
+    interpret(tree_system.configuration, command);
 }
 
 function interpret(configuration, word) {
