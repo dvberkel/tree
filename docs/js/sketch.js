@@ -1,22 +1,70 @@
+var width = 640;
+var height = 480;
+
 function setup() {
     createCanvas(640, 480);
+    strokeWeight(4);
+    stroke(125);
 }
 
 function draw() {
-    ellipse(mouseX, mouseY, 80, 80);
+    translate(width / 2, height);
+    scale(1, -1);
+    rotate(Math.PI/2);
+    var command = expand(tree_system);
+    interpret(tree_system.configuration, command);
 }
 
 var tree_system = {
-    start: 'S',
+    configuration: {
+        angle: Math.PI/6,
+        step: 10,
+        iterations: 3,
+    },
+    start: 'T',
     rules: {
-        'S': [[1, 'FF'],
-              [2, 'G']],
-        'F': [[1, 'FF']],
-        'G': [[1, 'GF']]
+        'T': [
+            [1, 'FT'],
+            [1, 'FST'],
+        ],
+        'S': [
+            [1, '[-T][+T]']
+        ],
+        'F': [
+            [1, 'FF'],
+        ],
     }
 }
 
-function expand(system, n) {
+function interpret(configuration, word) {
+    for (var index = 0; index < word.length; index++) {
+        var symbol = word[index];
+        switch (symbol) {
+            case 'F':
+                translate(configuration.step, 0);
+                line(0, 0, -configuration.step, 0);
+                break;
+            case '-':
+                rotate(-1 * configuration.angle);
+                break;
+            case '+':
+                rotate(configuration.angle);
+                break;
+            case '[':
+                push();
+                break;
+            case ']':
+                pop();
+                break;
+            default:
+                /* do nothing */
+                break;
+        }
+    }
+}
+
+function expand(system) {
+    var n = system.configuration.iterations;
     var word = system.start;
     for (var index = 0; index < n; index++) {
         word = substitute(system.rules, word);
