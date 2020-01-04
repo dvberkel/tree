@@ -1,22 +1,22 @@
 var tree_system = {
     configuration: {
-        angle: Math.PI / 6,
-        step: 10,
-        iterations: 5,
+        angle: Math.PI / 12,
+        step: 2,
+        iterations: 8,
         duration: 1000
     },
     start: 'T',
     rules: {
         'T': [
             [1, 'FT'],
-            [1, 'FST'],
+            [3, 'FST'],
         ],
         'S': [
-            [1, '[-T][+T]']
-        ],
-        'F': [
-            [1, 'FF'],
-        ],
+            [1, '[--T][++T]'],
+            [3, '[-----T][--T][++T][+++++T]'],
+            [1, '[-----T][--T][-S][+S][++T][+++++T]']
+         ],
+        'F': [[1, 'FF']],
     }
 }
 
